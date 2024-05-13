@@ -13,7 +13,6 @@ https://ignatmaldive.github.io/wysiwyg-editor/
 - **Content Editing**: Directly edit text content within paragraphs and headers (h1, h2, h3).
 - **Interactive Editing Interface**: After uploading, the document is displayed with adjacent 'Edit' buttons for quick access to modify text.
 - **Download Modified HTML**: Download the edited HTML file in its original format, free from any editing tools or scripts included during the editing process.
-- **Responsive Design**: Fully responsive interface suitable for desktop and mobile devices.
 
 
 ## Quick Start Tutorial
