@@ -8,7 +8,7 @@
     .container {
       margin: 20px;
     }
-    .editButton {
+    .editButton, .downloadButton {
       background-color: red;
       color: white;
       padding: 5px 10px;
@@ -35,6 +35,18 @@
       background-color: white;
       z-index: 10;
     }
+    #downloadButton {
+      position: fixed; /* Fixed positioning to stay in the top right corner */
+      top: 10px; /* 10px from the top */
+      right: 10px; /* 10px from the right */
+      z-index: 20; /* Ensures the button is above all other content */
+      display: none; /* Initially hidden */
+      background-color: red; /* Red background for the button */
+      color: white; /* White text color */
+      padding: 8px 16px; /* Padding for better sizing */
+      border: none; /* No border */
+      cursor: pointer; /* Pointer cursor on hover */
+    }
   </style>
 </head>
 <body>
@@ -44,9 +56,13 @@
     <input type="file" id="fileInput" accept=".html">
   </div>
 
+  <button class="downloadButton" id="downloadButton">Download Edited HTML</button>
+
   <iframe id="modifiedContentIframe"></iframe>
 
   <script>
+    var editedElements = []; // Array to keep track of edited elements
+
     document.getElementById('fileInput').addEventListener('change', function(event) {
       var file = event.target.files[0];
       var reader = new FileReader();
@@ -54,6 +70,7 @@
       reader.onload = function(event) {
         var fileContent = event.target.result;
         modifyHTML(fileContent);
+        document.getElementById('downloadButton').style.display = 'block'; // Show download button
       };
 
       reader.readAsText(file);
@@ -66,7 +83,6 @@
       iframeDoc.write(htmlContent);
       iframeDoc.close();
 
-      // Find all paragraphs, headings, and add edit buttons
       var elements = iframeDoc.querySelectorAll('p, h1, h2, h3');
       elements.forEach(function(element, index) {
         var elementId = 'element' + (index + 1);
@@ -75,15 +91,25 @@
         var editButton = iframeDoc.createElement('button');
         editButton.textContent = 'Edit';
         editButton.classList.add('editButton');
-        editButton.setAttribute('onclick', `editElement('${elementId}')`);
+        editButton.onclick = function() { editElement(elementId); };
         element.insertAdjacentElement('afterend', editButton);
       });
 
-      // Inject edit functionality into the iframe
       injectEditScript(iframeDoc);
 
-      // Hide the upload dialog
       document.getElementById('uploadContainer').style.display = 'none';
+    }
+
+    function editElement(elementId) {
+      var iframe = document.getElementById('modifiedContentIframe');
+      var element = iframe.contentDocument.getElementById(elementId);
+      var newText = prompt("Edit the text:", element.textContent);
+      if (newText !== null) {
+        element.textContent = newText;
+        if (!editedElements.includes(elementId)) {
+          editedElements.push(elementId);
+        }
+      }
     }
 
     function injectEditScript(doc) {
@@ -92,7 +118,7 @@
         function editElement(elementId) {
           var element = document.getElementById(elementId);
           var newText = prompt("Edit the text:", element.textContent);
-          if (newText !== null) { // Only update if user didn't cancel the prompt
+          if (newText !== null) {
             element.textContent = newText;
           }
         }
@@ -100,7 +126,24 @@
       doc.body.appendChild(script);
     }
 
+    document.getElementById('downloadButton').addEventListener('click', function() {
+      var iframe = document.getElementById('modifiedContentIframe');
+      var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      var clone = iframeDoc.cloneNode(true);
+      clone.querySelectorAll('.editButton').forEach(btn => btn.remove());
+
+      var a = document.createElement('a');
+      a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(clone.documentElement.outerHTML);
+      a.download = 'edited-content.html';
+      a.style.display = 'none';
+      a.download = 'edited-content.html';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
   </script>
 
 </body>
 </html>
+
