@@ -1,7 +1,7 @@
 # WYSIWYG Editor 
 
 ## Description
-The HTML Editor Tool is a web application designed to facilitate the visual editing of HTML documents directly in the browser. It allows users to upload HTML files, edit text content in a preview mode, and download the modified HTML file without any editing scripts or buttons. This tool is perfect for quick edits and reviewing HTML documents on the go.
+The HTML Editor Tool is a web application designed to facilitate the visual editing of HTML documents directly in the browser. It allows users to upload HTML files, edit text content in a preview mode, and download the modified HTML file without any code or html tags. This tool is perfect for quick edits and reviewing HTML documents on the go.
 
 ## Try it live
 
