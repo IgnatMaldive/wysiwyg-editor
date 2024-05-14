@@ -7,6 +7,8 @@ The HTML Editor Tool is a web application designed to facilitate the visual edit
 
 https://ignatmaldive.github.io/wysiwyg-editor/
 
+![[cover01.jpg]]
+
 ## Features
 
 - **HTML File Upload**: Users can upload any HTML file for editing.
