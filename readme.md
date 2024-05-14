@@ -9,6 +9,8 @@ https://ignatmaldive.github.io/wysiwyg-editor/
 
 ![[cover01.jpg]]
 
+![Cover image](cover01.jpg)
+
 ## Features
 
 - **HTML File Upload**: Users can upload any HTML file for editing.
