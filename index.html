@@ -1,149 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit HTML Text Fields</title>
-  <style>
-    .container {
-      margin: 20px;
-    }
-    .editButton, .downloadButton {
-      background-color: red;
-      color: white;
-      padding: 5px 10px;
-      border: none;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-    iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    #uploadContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      position: absolute;
-      width: 100%;
-      background-color: white;
-      z-index: 10;
-    }
-    #downloadButton {
-      position: fixed; /* Fixed positioning to stay in the top right corner */
-      top: 10px; /* 10px from the top */
-      right: 10px; /* 10px from the right */
-      z-index: 20; /* Ensures the button is above all other content */
-      display: none; /* Initially hidden */
-      background-color: red; /* Red background for the button */
-      color: white; /* White text color */
-      padding: 8px 16px; /* Padding for better sizing */
-      border: none; /* No border */
-      cursor: pointer; /* Pointer cursor on hover */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <title>Edit HTML Text Fields</title>
+    <style>
+        .container {
+            margin: 20px;
+        }
+
+        .downloadButton {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #uploadContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 180px;
+            width: 640px;
+            background-color: white;
+            z-index: 10;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px auto; /* Center horizontally */
+            position: relative; /* Adjust position relative to section */
+        }
+
+        #downloadButton {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 20;
+            display: none;
+            background-color: red;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .text-field {
+            position: relative;
+            display: inline-block;
+        }
+
+        .editButton {
+            background-color: green;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: -70px; /* Adjust this value to ensure the button is placed outside the content */
+        }
+
+        .upload-label {
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .upload-label span {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .upload-label input {
+            display: none;
+        }
+
+        .upload-label .choose-file {
+            display: inline-flex;
+            height: 2.5rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            background-color: #333;
+            color: #fff;
+            padding: 0 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .upload-label .choose-file:hover {
+            background-color: #555;
+        }
+    </style>
 </head>
-<body>
 
-  <div id="uploadContainer" class="container">
-    <h2>Upload HTML file</h2>
-    <input type="file" id="fileInput" accept=".html">
-  </div>
+<body class="flex items-center justify-center min-h-screen"> <!-- Flex container to center all content -->
 
-  <button class="downloadButton" id="downloadButton">Download Edited HTML</button>
+    <section class="w-full py-12 md:py-24 lg:py-32 border-y flex items-center justify-center"> <!-- Added flex classes here -->
+        <div class="container px-4 md:px-6 flex flex-col items-center space-y-10 xl:space-y-16"> <!-- Updated container to flex col -->
+            <div class="text-center"> <!-- Center text -->
+                <h1 class="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
+                    Edit web sites on the fly with this WYSIWYG editor
+                </h1>
+                <p class="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                    Our powerful WYSIWYG editor allows you to build responsive, modern websites without writing a
+                    single line of code.
+                </p>
+            </div>
+            <div class="flex items-center justify-center">
+                <label id="uploadContainer" class="upload-label">
+                    <span>Upload HTML file</span>
+                    <input type="file" id="fileInput" accept=".html">
+                    <span class="choose-file">Choose File</span>
+                </label>
+            </div>
+        </div>
+    </section>
 
-  <iframe id="modifiedContentIframe"></iframe>
+    <button class="downloadButton" id="downloadButton">Download Edited HTML</button>
 
-  <script>
-    var editedElements = []; // Array to keep track of edited elements
+    <iframe id="modifiedContentIframe"></iframe>
 
-    document.getElementById('fileInput').addEventListener('change', function(event) {
-      var file = event.target.files[0];
-      var reader = new FileReader();
+    <script>
+        var editedElements = []; // Array to keep track of edited elements
 
-      reader.onload = function(event) {
-        var fileContent = event.target.result;
-        modifyHTML(fileContent);
-        document.getElementById('downloadButton').style.display = 'block'; // Show download button
-      };
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            var reader = new FileReader();
 
-      reader.readAsText(file);
-    });
+            reader.onload = function (event) {
+                var fileContent = event.target.result;
+                modifyHTML(fileContent);
+                document.getElementById('downloadButton').style.display = 'block'; // Show download button
+            };
 
-    function modifyHTML(htmlContent) {
-      var iframe = document.getElementById('modifiedContentIframe');
-      var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      iframeDoc.open();
-      iframeDoc.write(htmlContent);
-      iframeDoc.close();
+            reader.readAsText(file);
+        });
 
-      var elements = iframeDoc.querySelectorAll('p, h1, h2, h3');
-      elements.forEach(function(element, index) {
-        var elementId = 'element' + (index + 1);
-        element.id = elementId;
+        function modifyHTML(htmlContent) {
+            var iframe = document.getElementById('modifiedContentIframe');
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(htmlContent);
+            iframeDoc.close();
 
-        var editButton = iframeDoc.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.classList.add('editButton');
-        editButton.onclick = function() { editElement(elementId); };
-        element.insertAdjacentElement('afterend', editButton);
-      });
+            var style = document.createElement('style');
+            style.textContent = `
+                .text-field {
+                    position: relative;
+                    display: inline-block;
+                }
 
-      injectEditScript(iframeDoc);
+                .editButton {
+                    background-color: green;
+                    color: white;
+                    padding: 5px 10px;
+                    border: none;
+                    cursor: pointer;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    right: -70px; /* Adjust this value to ensure the button is placed outside the content */
+                }
+            `;
+            iframeDoc.head.appendChild(style);
 
-      document.getElementById('uploadContainer').style.display = 'none';
-    }
+            var elements = iframeDoc.querySelectorAll('p, h1, h2, h3');
+            elements.forEach(function (element, index) {
+                var elementId = 'element' + (index + 1);
+                element.id = elementId;
 
-    function editElement(elementId) {
-      var iframe = document.getElementById('modifiedContentIframe');
-      var element = iframe.contentDocument.getElementById(elementId);
-      var newText = prompt("Edit the text:", element.textContent);
-      if (newText !== null) {
-        element.textContent = newText;
-        if (!editedElements.includes(elementId)) {
-          editedElements.push(elementId);
+                var editButton = iframeDoc.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.classList.add('editButton');
+                editButton.onclick = function () { editElement(elementId); };
+
+                var wrapper = iframeDoc.createElement('div');
+                wrapper.classList.add('text-field');
+                element.parentNode.insertBefore(wrapper, element);
+                wrapper.appendChild(element);
+                wrapper.appendChild(editButton);
+            });
+
+            injectEditScript(iframeDoc);
+
+            document.getElementById('uploadContainer').style.display = 'none';
         }
-      }
-    }
 
-    function injectEditScript(doc) {
-      var script = doc.createElement('script');
-      script.textContent = `
         function editElement(elementId) {
-          var element = document.getElementById(elementId);
-          var newText = prompt("Edit the text:", element.textContent);
-          if (newText !== null) {
-            element.textContent = newText;
-          }
+            var iframe = document.getElementById('modifiedContentIframe');
+            var element = iframe.contentDocument.getElementById(elementId);
+            var newText = prompt("Edit the text:", element.textContent);
+            if (newText !== null) {
+                element.textContent = newText;
+                if (!editedElements.includes(elementId)) {
+                    editedElements.push(elementId);
+                }
+            }
         }
-      `;
-      doc.body.appendChild(script);
-    }
 
-    document.getElementById('downloadButton').addEventListener('click', function() {
-      var iframe = document.getElementById('modifiedContentIframe');
-      var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-      var clone = iframeDoc.cloneNode(true);
-      clone.querySelectorAll('.editButton').forEach(btn => btn.remove());
+        function injectEditScript(doc) {
+            var script = doc.createElement('script');
+            script.textContent = `
+                function editElement(elementId) {
+                    var element = document.getElementById(elementId);
+                    var newText = prompt("Edit the text:", element.textContent);
+                    if (newText !== null) {
+                        element.textContent = newText;
+                    }
+                }
+            `;
+            doc.body.appendChild(script);
+        }
 
-      var a = document.createElement('a');
-      a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(clone.documentElement.outerHTML);
-      a.download = 'edited-content.html';
-      a.style.display = 'none';
-      a.download = 'edited-content.html';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    });
-  </script>
+        document.getElementById('downloadButton').addEventListener('click', function () {
+            var iframe = document.getElementById('modifiedContentIframe');
+            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            var clone = iframeDoc.cloneNode(true);
+            clone.querySelectorAll('.editButton').forEach(btn => btn.remove());
+
+            var a = document.createElement('a');
+            a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(clone.documentElement.outerHTML);
+            a.download = 'edited-content.html';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        });
+    </script>
 
 </body>
-</html>
 
+</html>
