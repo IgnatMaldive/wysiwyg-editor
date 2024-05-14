@@ -7,7 +7,7 @@ The HTML Editor Tool is a web application designed to facilitate the visual edit
 
 https://ignatmaldive.github.io/wysiwyg-editor/
 
-![[cover01.jpg]]
+![cover01.jpg]
 
 ![Cover image](cover01.jpg)
 
